@@ -32,6 +32,7 @@ FACE_LEFT = (47, 53, 61, 255)
 FACE_RIGHT = (57, 64, 73, 255)
 SHELF_LEFT = (66, 55, 72, 255)
 SHELF_RIGHT = (77, 62, 83, 255)
+SHELF_UNDERSIDE = (38, 34, 43, 255)
 EDGE = (21, 24, 29, 255)
 MOVE = (69, 151, 191, 255)
 SELECTED = (214, 181, 69, 255)
@@ -294,14 +295,25 @@ def build_draw_items(state: TacticsState) -> List[DrawItem]:
         c = surface.cell
         diag = c.x + c.y
 
+        pts = diamond(c)
+
+        if surface.kind == "shelf":
+            underside = tuple(
+                (x, y + SHELF_THICKNESS) for x, y in pts
+            )
+            items.append(DrawItem(
+                (diag, c.x, c.z, 0),
+                "underside",
+                underside,
+            ))
+
         items.append(DrawItem(
-            (diag, c.x, c.z, 0),
+            (diag, c.x, c.z, 1),
             "top",
             (surface, c in reachable,
              selected is not None and c == selected.cell),
         ))
 
-        pts = diamond(c)
         left, right, bottom = pts[3], pts[1], pts[2]
 
         if surface.kind == "shelf":
@@ -317,11 +329,11 @@ def build_draw_items(state: TacticsState) -> List[DrawItem]:
                 (bottom[0], bottom[1] + drop),
             )
             items.append(DrawItem(
-                (diag, c.x, c.z, 1), "face_left",
+                (diag, c.x, c.z, 2), "face_left",
                 (left_face, True),
             ))
             items.append(DrawItem(
-                (diag, c.x, c.z, 1), "face_right",
+                (diag, c.x, c.z, 2), "face_right",
                 (right_face, True),
             ))
 
@@ -342,7 +354,7 @@ def build_draw_items(state: TacticsState) -> List[DrawItem]:
                     (left[0], left[1] + drop),
                 )
                 items.append(DrawItem(
-                    (diag, c.x, c.z, 1), "face_left",
+                    (diag, c.x, c.z, 2), "face_left",
                     (face, False),
                 ))
 
@@ -354,14 +366,14 @@ def build_draw_items(state: TacticsState) -> List[DrawItem]:
                     (bottom[0], bottom[1] + drop),
                 )
                 items.append(DrawItem(
-                    (diag, c.x, c.z, 1), "face_right",
+                    (diag, c.x, c.z, 2), "face_right",
                     (face, False),
                 ))
 
     for unit in state.units:
         c = unit.cell
         items.append(DrawItem(
-            (c.x + c.y, c.x, c.z, 2),
+            (c.x + c.y, c.x, c.z, 3),
             "unit",
             unit,
         ))
@@ -387,7 +399,12 @@ class TacticsDisplayable(renpy.Displayable):
         canvas.rect(BG, (0, 0, width, height))
 
         for item in build_draw_items(self.state):
-            if item.kind == "top":
+            if item.kind == "underside":
+                pts = poly(item.payload)
+                canvas.polygon(SHELF_UNDERSIDE, pts)
+                canvas.lines(EDGE, True, pts, width=2)
+
+            elif item.kind == "top":
                 surface, reachable, selected = item.payload
                 color = (
                     MOVE if reachable
@@ -516,6 +533,7 @@ def run_self_test() -> None:
     assert Cell(3, 2, 1) in field.cost
 
     items = build_draw_items(TacticsState())
+    assert any(i.kind == "underside" for i in items)
     assert any(i.kind == "face_left" for i in items)
     assert any(i.kind == "face_right" for i in items)
     assert any(i.kind == "unit" for i in items)
