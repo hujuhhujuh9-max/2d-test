@@ -532,8 +532,33 @@ def run_self_test() -> None:
     )
     assert Cell(3, 2, 1) in field.cost
 
-    items = build_draw_items(TacticsState())
+    state = TacticsState()
+    items = build_draw_items(state)
     assert any(i.kind == "underside" for i in items)
     assert any(i.kind == "face_left" for i in items)
     assert any(i.kind == "face_right" for i in items)
     assert any(i.kind == "unit" for i in items)
+
+    # A unit below a shelf must be painted before the covering shelf.
+    under_index = next(
+        i for i, item in enumerate(items)
+        if item.kind == "unit" and item.payload.uid == "under"
+    )
+    cover_index = next(
+        i for i, item in enumerate(items)
+        if item.kind == "top"
+        and item.payload[0].cell == Cell(3, 2, 2)
+    )
+    assert under_index < cover_index
+
+    # A unit on a shelf must be painted after that shelf's top.
+    guard_index = next(
+        i for i, item in enumerate(items)
+        if item.kind == "unit" and item.payload.uid == "guard"
+    )
+    guard_floor_index = next(
+        i for i, item in enumerate(items)
+        if item.kind == "top"
+        and item.payload[0].cell == Cell(4, 3, 2)
+    )
+    assert guard_floor_index < guard_index
