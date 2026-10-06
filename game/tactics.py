@@ -100,16 +100,21 @@ class Board:
             for x in range(BOARD_W):
                 self.add(x, y, 0, "ground")
 
-        # Solid raised terrain. Exposed sides become full cliff faces.
+        # Solid raised terrain. A solid column replaces the ground surface
+        # underneath it; unlike a shelf, there is no walkable tunnel inside.
         for y in range(1, 5):
             for x in range(2, 5):
+                self.surfaces.pop(Cell(x, y, 0), None)
                 self.add(x, y, 1, "solid")
 
         # Thin shelf/bridge above usable ground.
         self.add(1, 4, 1, "shelf")
         self.add(1, 3, 1, "shelf")
 
-        # Upper balcony: floor below remains usable.
+        # A true three-surface column: ground + shelf + upper shelf.
+        self.add(1, 3, 2, "shelf")
+
+        # Upper balcony above the raised platform. The z=1 floor remains usable.
         for y in range(2, 4):
             for x in range(3, 5):
                 self.add(x, y, 2, "shelf")
@@ -493,10 +498,13 @@ class TacticsDisplayable(renpy.Displayable):
 def run_self_test() -> None:
     board = Board()
 
-    assert len(list(board.iter_surfaces())) == 54
-    assert board.exists(Cell(3, 2, 0))
+    assert len(list(board.iter_surfaces())) == 43
+    assert not board.exists(Cell(3, 2, 0))
     assert board.exists(Cell(3, 2, 1))
     assert board.exists(Cell(3, 2, 2))
+    assert board.exists(Cell(1, 3, 0))
+    assert board.exists(Cell(1, 3, 1))
+    assert board.exists(Cell(1, 3, 2))
 
     field = compute_movement_field(
         board,
