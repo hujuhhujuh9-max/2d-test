@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import Dict, Iterable, Iterator, List, Optional, Set, Tuple
 
 import renpy
+from renpy.display.displayable import Displayable
 
 import renpy.pygame as pygame
 
@@ -382,7 +383,7 @@ def build_draw_items(state: TacticsState) -> List[DrawItem]:
     return items
 
 
-class TacticsDisplayable(renpy.Displayable):
+class TacticsDisplayable(Displayable):
     """Pure-2D isometric renderer with face-level painter sorting."""
 
     def __init__(self, **properties) -> None:
