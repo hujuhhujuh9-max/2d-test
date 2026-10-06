@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: renfletpy-2d-test-${{ github.ref }}
@@ -87,15 +87,33 @@ jobs:
         run: |
           .android-build/venv/bin/python build_android.py
 
-      - name: Rename phone APK
+      - name: Build phone-sized arm64 APK
+        shell: bash
+        working-directory: upstream-sdk/.android-build/integration/android
+        run: |
+          ./gradlew --no-daemon -PrunnerAbi=arm64-v8a :app:assembleDebug
+          cp app/build/outputs/apk/debug/app-debug.apk "$GITHUB_WORKSPACE/renfletpy-2d-test-arm64.apk"
+
+      - name: Inspect phone APK
         shell: bash
         run: |
-          cp upstream-sdk/.android-build/outputs/runner-debug.apk renfletpy-2d-test.apk
-          sha256sum renfletpy-2d-test.apk
+          ls -lh renfletpy-2d-test-arm64.apk
+          sha256sum renfletpy-2d-test-arm64.apk
 
-      - name: Upload Android APK
+      - name: Upload Android APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: renfletpy-2d-test-apk
-          path: renfletpy-2d-test.apk
+          name: renfletpy-2d-test-arm64
+          path: renfletpy-2d-test-arm64.apk
+          compression-level: 0
           if-no-files-found: error
+
+      - name: Publish direct phone download
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view phone-latest >/dev/null 2>&1; then
+            gh release create phone-latest               --title "RenFletPy 2D Test - Phone Build"               --notes "Latest arm64 Android test build. Download the APK directly on your phone."
+          fi
+          gh release upload phone-latest renfletpy-2d-test-arm64.apk --clobber
