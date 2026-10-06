@@ -23,7 +23,7 @@ screen tactics_demo():
         vbox:
             spacing 4
             text "RENFLETPY / 2D TEST" size 25 bold True
-            text "Pure 2D - board[z][y][x] - face-level overlap" size 16 color "#b8bec8"
+            text "Pure 2D - board[z][y][x] - face-level overlap" size 16 color "#b8bec8" substitute False
             text "Tap a blue unit, then tap a blue tile." size 16 color "#d9dde3"
 
     hbox:
