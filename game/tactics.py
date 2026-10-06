@@ -396,7 +396,7 @@ class TacticsDisplayable(renpy.Displayable):
                 )
                 pts = poly(diamond(surface.cell))
                 canvas.polygon(color, pts)
-                canvas.line(EDGE, pts + [pts[0]], width=2)
+                canvas.lines(EDGE, True, pts, width=2)
 
             elif item.kind == "face_left":
                 points, shelf = item.payload
@@ -404,7 +404,7 @@ class TacticsDisplayable(renpy.Displayable):
                 canvas.polygon(
                     SHELF_LEFT if shelf else FACE_LEFT, pts
                 )
-                canvas.line(EDGE, pts + [pts[0]], width=2)
+                canvas.lines(EDGE, True, pts, width=2)
 
             elif item.kind == "face_right":
                 points, shelf = item.payload
@@ -412,7 +412,7 @@ class TacticsDisplayable(renpy.Displayable):
                 canvas.polygon(
                     SHELF_RIGHT if shelf else FACE_RIGHT, pts
                 )
-                canvas.line(EDGE, pts + [pts[0]], width=2)
+                canvas.lines(EDGE, True, pts, width=2)
 
             elif item.kind == "unit":
                 self.draw_unit(canvas, item.payload)
