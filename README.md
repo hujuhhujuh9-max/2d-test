@@ -63,6 +63,13 @@ On Android: tap the link, allow the browser to download the APK, then open it an
 - `RESET` restores the demo.
 - `QUIT` exits.
 
+## Basic live test
+
+With the Ren'Py 8.5.3 SDK, run `renpy.sh PATH_TO_THIS_REPOSITORY test basic_tactics`.
+This opens the actual game, renders the board, clicks a unit and a destination, and checks reset.
+GitHub Actions runs this test under Xvfb before building an APK, and uploads its screenshots and log.
+Pull requests build a test APK artifact; only builds on `main` update the direct phone download.
+
 ## Upstream architecture
 
 The pinned RenFletPy base keeps Ren'Py/SDL as Android startup owner and the single Python interpreter. Flutter/Flet remains embedded in that host, but is visually collapsed for this graphics-focused test.

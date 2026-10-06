@@ -4,8 +4,7 @@ from collections import deque
 from dataclasses import dataclass
 from typing import Dict, Iterable, Iterator, List, Optional, Set, Tuple
 
-import renpy
-from renpy.display.displayable import Displayable
+from renpy.exports import Displayable, Render, redraw
 
 import renpy.pygame as pygame
 
@@ -392,10 +391,10 @@ class TacticsDisplayable(Displayable):
 
     def reset(self) -> None:
         self.state.reset()
-        renpy.redraw(self, 0)
+        redraw(self, 0)
 
     def render(self, width: int, height: int, st: float, at: float):
-        render = renpy.Render(width, height)
+        render = Render(width, height)
         canvas = render.canvas()
         canvas.rect(BG, (0, 0, width, height))
 
@@ -502,13 +501,13 @@ class TacticsDisplayable(Displayable):
             if unit is not None:
                 if unit.team == PLAYER:
                     self.state.select(unit)
-                    renpy.redraw(self, 0)
+                    redraw(self, 0)
                 return None
 
             target = self.pick_surface(x, y)
             if target is not None:
                 self.state.move_selected(target)
-                renpy.redraw(self, 0)
+                redraw(self, 0)
 
         return None
 
