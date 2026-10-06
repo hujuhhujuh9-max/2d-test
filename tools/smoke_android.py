@@ -61,6 +61,7 @@ def main():
         adb("wait-for-device")
         adb("install", "-r", str(args.apk))
         adb("shell", "input", "keyevent", "82")
+        adb("shell", "settings", "put", "secure", "immersive_mode_confirmations", "confirmed")
         adb("shell", "settings", "put", "system", "accelerometer_rotation", "0")
         adb("shell", "settings", "put", "system", "user_rotation", "1")
         adb("shell", "am", "force-stop", PACKAGE)
@@ -77,19 +78,26 @@ def main():
                 raise AssertionError("The board and player did not render within 90 seconds")
             time.sleep(2)
 
+        print("Android board rendered.", flush=True)
+
         tap(image, 430, 350)
         tap(image, 376, 347)
         image = capture(output / "moved.png")
         expect_color(image, 376, 368, SELECTED)
+        expect_color(image, 376, 332, (74, 170, 157))
+        print("Android unit selection and ground movement passed.", flush=True)
 
         tap(image, 442, 284)
         image = capture(output / "raised.png")
         expect_color(image, 442, 306, SELECTED)
+        expect_color(image, 430, 267, (74, 170, 157))
+        print("Android height change passed.", flush=True)
 
         tap(image, 1080, 27)
         image = capture(output / "reset.png")
         expect_color(image, 350, 350, REACHABLE)
         expect_color(image, 430, 350, (74, 170, 157))
+        print("Android reset passed.", flush=True)
 
         tap(image, 1190, 27)
         deadline = time.monotonic() + 10
