@@ -7,7 +7,6 @@ on:
       - ".github/workflows/build-apk.yml"
       - "game/**"
       - "tools/**"
-      - "README.md"
   workflow_dispatch:
 
 permissions:
