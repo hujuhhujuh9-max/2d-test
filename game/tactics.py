@@ -6,10 +6,7 @@ from typing import Dict, Iterable, Iterator, List, Optional, Set, Tuple
 
 import renpy
 
-try:
-    import pygame_sdl2 as pygame
-except Exception:
-    import pygame
+import renpy.pygame as pygame
 
 
 BOARD_W = 6
