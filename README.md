@@ -47,7 +47,13 @@ The patch only affects the temporary CI copy:
 
 The original `SDK-` repository is never changed.
 
-After a successful workflow run, download the **renfletpy-2d-test-apk** artifact and install `renfletpy-2d-test.apk` on Android.
+After a successful workflow run, Android users can download the current phone build directly:
+
+https://github.com/hujuhhujuh9-max/2d-test/releases/download/phone-latest/renfletpy-2d-test-arm64.apk
+
+This is an **arm64** build for normal modern Android phones. It avoids the much larger universal/x86 test package produced internally by the upstream validation build.
+
+On Android: tap the link, allow the browser to download the APK, then open it and allow installation from that browser if Android asks.
 
 ## Controls
 
