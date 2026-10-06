@@ -3,6 +3,7 @@ game/saves/
 *.rpyc
 __pycache__/
 tests/screenshots/
+android-smoke/
 log.txt
 traceback.txt
 errors.txt

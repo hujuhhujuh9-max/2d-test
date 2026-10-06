@@ -124,6 +124,30 @@ jobs:
         run: |
           .android-build/venv/bin/python build_android.py
 
+      - name: Enable Android emulator acceleration
+        shell: bash
+        run: sudo chmod 666 /dev/kvm
+
+      - name: Test basic demo on Android
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+          script: |
+            upstream-sdk/.android-build/venv/bin/python -m pip install Pillow
+            upstream-sdk/.android-build/venv/bin/python tools/smoke_android.py upstream-sdk/.android-build/outputs/runner-debug-x86_64.apk
+
+      - name: Upload Android live test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-demo-smoke
+          path: android-smoke/
+          if-no-files-found: ignore
+
       - name: Build phone-sized arm64 APK
         shell: bash
         working-directory: upstream-sdk/.android-build/integration/android

@@ -19,6 +19,11 @@ testsuite basic_tactics:
         click pos (50, 650)
         assert eval (tactics_view.state.selected.cell.x == 0 and tactics_view.state.selected.cell.y == 4)
 
+        # A reachable shelf requires a height-changing move.
+        click pos (442, 284)
+        assert eval (tactics_view.state.selected.cell.x == 1 and tactics_view.state.selected.cell.y == 4 and tactics_view.state.selected.cell.z == 1)
+        screenshot "demo-raised.png"
+
         click "RESET"
         assert eval (tactics_view.state.selected_uid == "knight")
         assert eval (tactics_view.state.units[1].cell.x == 1 and tactics_view.state.units[1].cell.y == 4 and tactics_view.state.units[1].cell.z == 0)

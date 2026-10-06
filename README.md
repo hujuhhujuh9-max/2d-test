@@ -66,8 +66,9 @@ On Android: tap the link, allow the browser to download the APK, then open it an
 ## Basic live test
 
 With the Ren'Py 8.5.3 SDK, run `renpy.sh PATH_TO_THIS_REPOSITORY test basic_tactics`.
-This opens the actual game, renders the board, clicks a unit and a destination, and checks reset.
+This opens the actual game, renders the board, clicks a unit and destinations at two heights, and checks reset.
 GitHub Actions runs this test under Xvfb before building an APK, and uploads its screenshots and log.
+It also installs the x86 APK on an Android emulator and checks launch, movement, height changes, reset, and quit through real taps and screenshots.
 Pull requests build a test APK artifact; only builds on `main` update the direct phone download.
 
 ## Upstream architecture
